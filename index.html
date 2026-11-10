@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PORTFOLIO</title>
+    <style>
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { margin: 0; background-color: #000; color: #C4D0DF; font-family: Arial, sans-serif; }
+        .pageSection { position: relative; width: 100%; height: 100vh; min-height: 540px; overflow: hidden; }
+
+        /* Fixed menu shared by all sections */
+        #topMenu {
+            position: fixed; top: 35px; left: 50px; right: 50px;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 20;
+        }
+        #topMenu a { color: #D8E1ED; text-decoration: none; font-size: 16px; transition: color .3s; }
+        #topMenu nav { display: flex; gap: 40px; }
+        #topMenu a:hover { color: #B9E58B; }
+
+        /* HOME */
+        #mainVideo {
+            position: absolute; width: 100%; height: 100%;
+            object-fit: cover; top: 0; left: 0; z-index: 0; pointer-events: none;
+        }
+        #textBox {
+            position: absolute; left: 50%; bottom: 7%; transform: translateX(-50%);
+            width: min(1400px, calc(100% - 40px));
+            display: flex; flex-direction: column; align-items: flex-start;
+            text-align: left; z-index: 1;
+        }
+        #textBox h1 { order: 3; margin: 0; width: 100%; }
+        #titleCrop {
+    order: 3;
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1382 / 202;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+#titleVideo {
+    position: absolute;
+    width: 148%;
+    height: auto;
+    max-width: none;
+    left: 50%;
+    bottom: -25%;
+    transform: translateX(-50%);
+    display: block;
+}
+        #textBox p {
+            order: 2; font-size: clamp(14px, 1.2vw, 20px); color: #C4D0DF;
+            font-family: Georgia, serif; margin: 0 0 6px; margin-left: 5px;
+        }
+        #textBox a {
+            order: 1; font-size: clamp(14px, 1.2vw, 20px);
+            color: #B9E58B; font-family: Georgia, serif;
+            text-decoration: none; margin-bottom: 2px; margin-left: 5px; transition: .5s;
+        }
+        #textBox a:hover { color: #D8FF9B; text-shadow: 0 0 12px #B9E58B; }
+
+        /* WORKS */
+        #baseImg { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
+        .glowImg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover; object-position: center;
+            opacity: 0; transition: opacity .4s ease-in-out; pointer-events: none;
+        }
+        #workMenu { position: absolute; width: 100%; height: 100%; top: 0; left: 0; z-index: 2; pointer-events: none; }
+        #workMenu button {
+            background: none; border: none; color: #C4D0DF;
+            font-family: Georgia, serif; font-size: 2rem;
+            font-weight: normal; cursor: pointer; pointer-events: auto;
+        }
+        #rishiBtn { position: absolute; left: 20%; top: 43%; transform: translate(-50%, -50%); }
+        #glassBtn { position: absolute; right: 20%; top: 43%; transform: translate(50%, -50%); }
+        #nextBtn { position: absolute; left: calc(50% + 15px); bottom: 10%; transform: translateX(-50%); }
+        #works:has(#rishiBtn:hover) #teaImg { opacity: 1; }
+        #works:has(#glassBtn:hover) #glassImg { opacity: 1; }
+        #rishiBtn:hover,
+#glassBtn:hover {
+    color: #B9E58B;
+    text-shadow: 0 0 8px rgba(185,229,139,0.7);
+}
+        /* WORKS 자동 클릭 유도 효과 */
+#rishiBtn, #glassBtn {
+    transition: color 0.4s, text-shadow 0.4s;
+}
+
+#works.hintRishi #teaImg,
+#works.hintGlass #glassImg {
+    opacity: 1;
+}
+
+#works.hintRishi #rishiBtn,
+#works.hintGlass #glassBtn {
+    color: #B9E58B;
+    text-shadow: 0 0 8px rgba(185,229,139,0.7);
+}
+
+        /* Video popup */
+        #workPopup {
+            width: min(1050px, calc(100% - 48px)); padding: 28px;
+            background: #101317; color: #C4D0DF; border: 1px solid #46505A;
+            text-align: center; font-family: Georgia, serif;
+            max-height: calc(100vh - 40px); overflow-y: auto;
+        }
+        #workPopup::backdrop { background: rgba(0, 0, 0, .6); backdrop-filter: blur(12px); }
+        #closePopup {
+            position: absolute; right: 20px; top: 15px; z-index: 2; background: none;
+            border: none; color: #fff; font-size: 28px; cursor: pointer;
+        }
+        #popupVideo { width: 100%; display: block; background: #000; aspect-ratio: 16 / 9; }
+        #projectInfo { margin-top: 24px; text-align: left; }
+        #infoTop { display: flex; justify-content: space-between; align-items: center; gap: 15px; }
+        #popupTitle { margin: 0; font-size: 1.5rem; font-weight: normal; letter-spacing: .12em; }
+        #storyLink { color: #B9E58B; font-size: 1rem; text-decoration: none; cursor: pointer; white-space: nowrap; }
+        #storyLink:hover { color: #D8FF9B; }
+        #popupDesc {
+            border-top: 1px solid #46505A; padding-top: 16px; margin-top: 18px;
+            color: #AEB9C5; font-size: 1rem; line-height: 1.8;
+        }
+
+        /* ABOUT */
+        #aboutBase, #aboutGlow {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%; object-fit: cover; object-position: center;
+        }
+        #aboutGlow {
+            opacity: 0; pointer-events: none;
+            clip-path: inset(35% 34% 30% 40%);
+            animation: teaGlow 5s ease-in-out infinite;
+        }
+        @keyframes teaGlow { 0%, 100% { opacity: 0; } 50% { opacity: .8; } }
+        #aboutContent {
+            position: absolute; top: 50%; left: max(30px, calc((100% - 1400px) / 2));
+            transform: translateY(-50%); width: 38%; max-width: 550px; z-index: 2;
+        }
+        #aboutContent h1 {
+            font-family: Georgia, serif; font-size: clamp(50px, 5vw, 90px);
+            font-weight: normal; font-style: italic; letter-spacing: .08em;
+            color: #B9E58B; margin: 0 0 15px;
+        }
+        #aboutContent h2 {
+            font-family: Georgia, serif; font-size: clamp(18px, 1.6vw, 26px);
+            font-weight: normal; letter-spacing: .12em; margin: 0 0 30px;
+        }
+        #aboutContent p {
+            font-size: clamp(13px, 1vw, 16px); line-height: 1.9;
+            color: #B8C2CD; margin-bottom: 30px;
+        }
+        .toolGroup { margin-top: 22px; }
+        .toolGroup h3 {
+            font-family: Georgia, serif; font-size: 16px; font-weight: normal;
+            letter-spacing: .18em; margin: 0 0 12px;
+        }
+        .toolRow { display: flex; gap: 14px; flex-wrap: wrap; }
+        .toolIcon {
+            width: 64px; height: 64px; border: 1px solid #8995A1; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            color: #E4EAF0; font-size: 22px; font-weight: bold; transition: .4s;
+        }
+        .toolIcon:hover {
+            border-color: #B9E58B; box-shadow: 0 0 12px rgba(185, 229, 139, .25);   }
+            .toolIcon img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    display: block;
+}
+        .aiTool { width: 64px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+        .aiTool span { font-size: 13px; color: #AEB9C5; white-space: nowrap; }
+
+        @media (max-width: 700px) {
+            #topMenu { left: 20px; right: 20px; top: 22px; }
+            #topMenu a { font-size: 13px; }
+            #topMenu nav { gap: 17px; }
+            #workMenu button { font-size: 1.1rem; }
+            #rishiBtn { left: 19%; }
+            #glassBtn { right: 19%; }
+            #aboutContent { width: min(82%, 550px); left: 25px; top: 52%; }
+            #aboutContent h1 { font-size: 50px; }
+            #aboutContent p { font-size: 12px; }
+            .toolIcon { width: 48px; height: 48px; }
+            .toolIcon img { width: 36px; height: 36px; }
+            .aiTool { width: 48px; }
+            .toolRow { gap: 12px; }
+            .aiTool span { font-size: 10px; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            .glowImg, .toolIcon, #textBox a { transition: none; }
+            #aboutGlow { animation: none; }
+        }
+        html { scroll-snap-type: y mandatory; }
+.pageSection {
+    scroll-snap-align: start;
+}
+
+
+/* CONTACT FOOTER */
+#contactFooter {
+    background: #000;
+    border-top: 1px solid #30383F;
+    padding: 65px max(24px, calc((100% - 1400px) / 2)) 35px;
+    scroll-snap-align: start;
+}
+
+#contactFooter h2 {
+    font-family: Georgia, serif;
+    font-size: 32px;
+    font-weight: normal;
+    letter-spacing: 0.12em;
+    color: #B9E58B;
+    margin: 0 0 28px;
+}
+
+#contactFooter .contactName {
+    font-family: Georgia, serif;
+    font-size: 20px;
+    color: #D8E1ED;
+    margin: 0 0 12px;
+}
+
+#contactFooter a {
+    font-size: 16px;
+    color: #C4D0DF;
+    text-decoration: none;
+}
+
+#contactFooter a:hover {
+    color: #B9E58B;
+}
+
+#contactFooter .copyright {
+    font-size: 12px;
+    color: #78838E;
+    margin: 50px 0 0;
+}
+
+/* SOUND BUTTON */
+#soundControl {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#playBtn {
+    background: none;
+    border: none;
+    padding: 0;
+    color: #D8E1ED;
+    font-size: 13px;
+    cursor: pointer;
+    transition: color 0.3s;
+    transform: translateX(-6px);
+}
+
+#playBtn:hover {
+    color: #B9E58B;
+}
+#soundBtn {
+    background: none;
+    border: none;
+    padding: 0;
+    color: #D8E1ED;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color 0.3s;
+}
+
+#soundBtn:hover {
+    color: #B9E58B;
+}
+
+@media (max-width: 700px) {
+    #soundBtn {
+        font-size: 13px;
+    }
+}
+@media (max-width: 375px) {
+    #glassBtn { right: 25%; }
+    #topMenu a, #soundBtn {
+        font-size: 11px;
+    }
+
+    #topMenu nav {
+        gap: 10px;
+    }
+}
+@media (min-width: 701px) and (max-width: 900px) {
+    #aboutContent {
+        width: 60%;
+    }
+}
+    </style>
+</head>
+<body>
+    <header id="topMenu">
+        <a href="#home">HOME</a>
+
+        <nav>
+            <div id="soundControl">
+                <button type="button" id="playBtn" aria-label="배경음악 재생">▶</button>
+                <button type="button" id="soundBtn">SOUND OFF</button>
+            </div>
+    <a href="#works">WORKS</a>
+    <a href="#about">ABOUT</a>
+    <a href="#contactFooter">CONTACT</a>
+</nav>
+    </header>
+<!-- BACKGROUND MUSIC -->
+<audio id="bgm" src="bgm.mp3" loop preload="auto"></audio>
+
+    <!-- Section 1: HOME -->
+    <section id="home" class="pageSection">
+        <video id="mainVideo" autoplay muted loop playsinline disablepictureinpicture>
+            <source src="inori20.mp4" type="video/mp4">
+        </video>
+        <div id="textBox">
+            <p>MOTION / AI / VISUAL</p>
+            <a href="#works">EXPLORE →</a>
+        
+            <div id="titleCrop">
+                <video id="titleVideo" autoplay muted loop playsinline disablepictureinpicture>
+                    <source src="PORTFOLIO_title.webm" type="video/webm">
+                </video>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 2: WORKS -->
+    <section id="works" class="pageSection">
+        <img src="base.png" id="baseImg" alt="Glass Inori">
+        <img src="tea.png" id="teaImg" class="glowImg" alt="">
+        <img src="glass.png" id="glassImg" class="glowImg" alt="">
+        <div id="workMenu">
+            <button type="button" id="rishiBtn">RISHI TEA</button>
+            <button type="button" id="nextBtn">NEXT</button>
+            <button type="button" id="glassBtn">GLASS GARDEN</button>
+        </div>
+    </section>
+
+    <!-- Section 3: ABOUT -->
+    <section id="about" class="pageSection">
+        <img src="about-base.png" id="aboutBase" alt="Glass Inori">
+        <img src="about-glow.png" id="aboutGlow" alt="">
+        <div id="aboutContent">
+            <h1>ABOUT</h1>
+            <h2>STORIES IN MOTION</h2>
+            <p>
+                감정과 분위기를 영상 언어로 풀어내는 것을 좋아합니다.<br>
+                기획부터 연출, 제작까지 이야기의 메시지를 효과적으로<br>
+                전달하는 영상 콘텐츠를 만들고자 합니다.
+            </p>
+            <div class="toolGroup">
+                <h3>TOOLS</h3>
+                <div class="toolRow">
+                    <div class="toolIcon">Ae</div>
+                    <div class="toolIcon">Pr</div>
+                    <div class="toolIcon">Ps</div>
+                </div>
+            </div>
+            <div class="toolGroup">
+                <h3>AI TOOLS</h3>
+                <div class="toolRow">
+                    <div class="aiTool"><div class="toolIcon"><img src="GPT.png" alt="ChatGPT"></div><span>ChatGPT</span></div>
+<div class="aiTool"><div class="toolIcon"><img src="11labs.png" alt="ElevenLabs"></div><span>ElevenLabs</span></div>
+<div class="aiTool"><div class="toolIcon"><img src="FLOW.png" alt="Google Flow"></div><span>Google Flow</span></div>
+<div class="aiTool"><div class="toolIcon"><img src="Kling.png" alt="Kling"></div><span>Kling</span></div>
+<div class="aiTool"><div class="toolIcon"><img src="suno.png" alt="Suno"></div><span>Suno</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+<!-- CONTACT FOOTER -->
+<footer id="contactFooter">
+    <h2>CONTACT</h2>
+    <p class="contactName">YUNSEO LEE &nbsp; | &nbsp; 010-9230-0688</p>
+    <a href="mailto:dbstj0688@naver.com">dbstj0688@naver.com</a>
+    <p class="copyright">© 2026 PORTFOLIO</p>
+</footer>
+    <!-- Shared project popup -->
+    <dialog id="workPopup">
+        <button type="button" id="closePopup" aria-label="닫기">×</button>
+        <video id="popupVideo" controls playsinline preload="none"></video>
+        <div id="projectInfo">
+            <div id="infoTop">
+                <h2 id="popupTitle"></h2>
+                <a id="storyLink" target="_blank" rel="noopener noreferrer">STORYBOARD ↗</a>
+            </div>
+            <p id="popupDesc"></p>
+        </div>
+    </dialog>
+
+    <script>
+        const popup = document.getElementById("workPopup");
+        const video = document.getElementById("popupVideo");
+
+        function openProject(title, file, thumbnail, storyboard, description) {
+            document.getElementById("popupTitle").textContent = title;
+            document.getElementById("storyLink").href = storyboard;
+            document.getElementById("popupDesc").textContent = description;
+            video.poster = thumbnail;
+            video.src = file;
+            video.load();
+            popup.showModal();
+        }
+
+        document.getElementById("rishiBtn").onclick = function () {
+            openProject(
+                "RISHI TEA", "rishi.mp4", "rishi-thumb.png", "rishi-storyboard.pdf",
+                "높아지는 기대와 빨라지는 일상 속, 한 잔의 차로 되찾는 여유를 담은 브랜드 광고 영상."
+            );
+        };
+
+        document.getElementById("glassBtn").onclick = function () {
+            openProject(
+                "GLASS GARDEN", "garden.mp4", "garden-thumb.png", "garden-storyboard.pdf",
+                "금지된 유리꽃을 만진 소녀의 변화를 담은 오리지널 애니메이션 티저."
+            );
+        };
+
+        document.getElementById("closePopup").onclick = function () {
+            popup.close();
+        };
+
+        popup.addEventListener("close", function () {
+            video.pause();
+            video.removeAttribute("src");
+            video.load();
+        });
+
+// BACKGROUND MUSIC CONTROL
+const bgm = document.getElementById("bgm");
+const soundBtn = document.getElementById("soundBtn");
+const playBtn = document.getElementById("playBtn");
+
+let soundOn = false;
+
+bgm.volume = 0.3;
+
+function toggleSound() {
+    if (soundOn) {
+        soundOn = false;
+        bgm.pause();
+        soundBtn.textContent = "SOUND OFF";
+        playBtn.textContent = "▶";
+    } else {
+        bgm.play().then(function () {
+            soundOn = true;
+            soundBtn.textContent = "SOUND ON";
+            playBtn.textContent = "Ⅱ";
+        }).catch(function () {
+            soundOn = false;
+            soundBtn.textContent = "SOUND OFF";
+            playBtn.textContent = "▶";
+        });
+    }
+}
+
+soundBtn.addEventListener("click", toggleSound);
+playBtn.addEventListener("click", toggleSound);
+
+// 작품 팝업을 열면 BGM 정지
+document.getElementById("rishiBtn").addEventListener("click", function () {
+    bgm.pause();
+});
+
+document.getElementById("glassBtn").addEventListener("click", function () {
+    bgm.pause();
+});
+
+// 팝업을 닫으면 이전 음악 설정 복구
+popup.addEventListener("close", function () {
+    if (soundOn) {
+        bgm.play().catch(function () {
+            soundOn = false;
+            soundBtn.textContent = "SOUND OFF";
+            playBtn.textContent = "▶";
+        });
+    }
+});
+
+// WORKS 자동 클릭 유도 효과
+const worksSection = document.getElementById("works");
+let hintTimers = [];
+
+function clearWorksHints() {
+    hintTimers.forEach(clearTimeout);
+    hintTimers = [];
+    worksSection.classList.remove("hintRishi", "hintGlass");
+}
+
+function playWorksHints() {
+    clearWorksHints();
+
+    hintTimers.push(setTimeout(() => {
+        worksSection.classList.add("hintRishi");
+    }, 500));
+
+    hintTimers.push(setTimeout(() => {
+        worksSection.classList.remove("hintRishi");
+    }, 1800));
+
+    hintTimers.push(setTimeout(() => {
+        worksSection.classList.add("hintGlass");
+    }, 2300));
+
+    hintTimers.push(setTimeout(() => {
+        worksSection.classList.remove("hintGlass");
+    }, 3600));
+}
+
+const worksObserver = new IntersectionObserver(function(entries) {
+    if (entries[0].isIntersecting) {
+        playWorksHints();
+    } else {
+        clearWorksHints();
+    }
+}, { threshold: 0.6 });
+
+worksObserver.observe(worksSection);
+
+document.getElementById("rishiBtn")
+    .addEventListener("mouseenter", clearWorksHints);
+
+document.getElementById("glassBtn")
+    .addEventListener("mouseenter", clearWorksHints);
+    </script>
+</body>
+</html>
