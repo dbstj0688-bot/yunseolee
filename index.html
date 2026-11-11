@@ -455,6 +455,23 @@
     </dialog>
 
     <script>
+        history.scrollRestoration = "manual";
+
+window.addEventListener("pageshow", function () {
+    const nav = performance.getEntriesByType("navigation")[0];
+    if (!nav || nav.type !== "reload") return;
+
+    history.replaceState(null, "", location.pathname + location.search);
+
+    const html = document.documentElement;
+    html.style.scrollBehavior = "auto";
+    window.scrollTo(0, 0);
+
+    requestAnimationFrame(function () {
+        window.scrollTo(0, 0);
+        html.style.scrollBehavior = "";
+    });
+});
         const popup = document.getElementById("workPopup");
         const video = document.getElementById("popupVideo");
 
