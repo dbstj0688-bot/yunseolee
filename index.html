@@ -335,27 +335,7 @@
 @media (prefers-reduced-motion: reduce) {
     #mobileTitle { animation: none; opacity: 1; }
 }
-/* 모바일 타이틀 사각형 제거 */
-@media (max-width: 700px) {
-    #titleVideo, #mobileTitle {
-        display: none !important;
-    }
 
-    #titleCrop::after {
-        content: "PORTFOLIO";
-        display: flex;
-        width: 100%;
-        height: 100%;
-        justify-content: center;
-        align-items: center;
-        font-family: Georgia, serif;
-        font-size: 9vw;
-        letter-spacing: -0.04em;
-        color: #D8E1ED;
-        text-shadow: 1px 1px 1px white, 2px 3px 3px #46505A;
-        animation: mobileTitleAppear 20s linear infinite;
-    }
-}
     </style>
 </head>
 <body>
